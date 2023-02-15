@@ -1,0 +1,15 @@
+{{ if (not (output "sh" "-c" "getent group nixbld || true")) -}}
+#!/usr/bin/env sh
+
+shadow=$({{ template "nix" . }} --experimental-features "nix-command flakes" build --no-link --print-out-paths nixpkgs#shadow.out)
+
+$shadow/bin/groupadd -r nixbld
+
+for n in $(seq 1 10)
+do
+  $shadow/bin/useradd -c "Nix build user $n" \
+    -d /var/empty -g nixbld -G nixbld -M -N -r -s "$(which nologin)" \
+    nixbld$n;
+done
+
+{{ end -}}

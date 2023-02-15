@@ -1,0 +1,9 @@
+if [[ -z "$_COMMONRC" ]]
+then
+export _COMMONRC=1
+
+export PATH="{{ .chezmoi.homeDir }}/.nix-packages/bin"\
+":{{ template "bindir" . }}"\
+":$PATH"
+
+fi

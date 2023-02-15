@@ -1,0 +1,17 @@
+with import <nixpkgs> {};
+buildEnv {
+  name = "packages";
+  paths = [
+    chezmoi
+    git
+    tmux
+
+    zsh
+
+    nix
+    curl
+    jq
+    htop
+    nettools
+  ];
+}

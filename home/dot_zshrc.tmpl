@@ -1,0 +1,13 @@
+{{ template "commonrc" . }}
+
+if [[ -z $TMUX ]] && ! chezmoi update
+then
+  return
+fi
+
+fpath=(~/.nix-packages/share/zsh/site-functions $fpath)
+
+DISABLE_AUTO_UPDATE="true"
+
+export ZSH="{{ .chezmoi.workingTree }}/ohmyzsh"
+source $ZSH/zshrc

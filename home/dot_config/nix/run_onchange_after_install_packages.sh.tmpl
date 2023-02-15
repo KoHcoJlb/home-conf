@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+# packages: {{ joinPath .chezmoi.workingTree "home" .chezmoi.sourceFile "../packages.nix.tmpl" | includeTemplate | sha256sum }}
+
+{{ if $nix := includeTemplate "nix" . -}}
+
+{{ if eq .chezmoi.uid "0" -}}
+{{ template "create_nix_users" . }}
+{{- end }}
+
+{{ $nix }} build -o {{ .chezmoi.homeDir }}/.nix-packages -f packages.nix
+
+{{- else -}}
+echo "No nix binary for {{ .chezmoi.os }}_{{ .chezmoi.arch }}"
+{{- end }}

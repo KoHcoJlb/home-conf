@@ -1,0 +1,1 @@
+{{ lookPath (joinPath (first .).chezmoi.homeDir ".nix-packages/bin" (last .) ) }}

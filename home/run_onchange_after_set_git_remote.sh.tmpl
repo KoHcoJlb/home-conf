@@ -1,0 +1,9 @@
+{{ if lookPath "git" -}}
+#!/usr/bin/env sh
+
+cd {{ .chezmoi.workingTree }}
+git remote set-url origin --push git@github.com:KoHcoJlb/home-conf.git
+
+cd ohmyzsh
+git remote set-url origin --push git@github.com:KoHcoJlb/ohmyzsh.git
+{{- end }}
