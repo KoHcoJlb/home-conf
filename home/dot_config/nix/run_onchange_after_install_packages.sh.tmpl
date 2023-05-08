@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
 # packages: {{ joinPath .chezmoi.workingTree "home" .chezmoi.sourceFile "../packages.nix.tmpl" | includeTemplate | sha256sum }}
+# registry: {{ joinPath .chezmoi.workingTree "home" .chezmoi.sourceFile "../registry.json" | include | sha256sum }}
 
 {{ if $nix := includeTemplate "nix" . -}}
 
