@@ -1,10 +1,12 @@
 {{ template "commonrc" . }}
 
+{{ if or (not (hasKey . "autoUpdate")) .autoUpdate -}}
 if [[ -z $TMUX ]] && ! chezmoi update
 then
   echo "Press enter to continue"
   read -s
 fi
+{{- end }}
 
 fpath=(~/.nix-packages/share/zsh/site-functions $fpath)
 
