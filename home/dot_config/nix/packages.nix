@@ -15,5 +15,6 @@ buildEnv {
     jq
     htop
     nettools
+    file
   ];
 }
