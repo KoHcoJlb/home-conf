@@ -1,5 +1,3 @@
-{{ template "commonrc" . }}
-
 {{ if or (not (hasKey . "autoUpdate")) .autoUpdate -}}
 if [[ -z $TMUX ]] && ! chezmoi update
 then
