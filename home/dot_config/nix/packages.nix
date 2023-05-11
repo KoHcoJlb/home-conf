@@ -8,9 +8,10 @@ buildEnv {
     git
     tmux
     zsh
-    nix
+    nixVersions.unstable
     glibcLocalesUtf8
 
+    rsync
     curl
     jq
     htop
