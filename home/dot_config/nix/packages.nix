@@ -9,7 +9,11 @@ buildEnv {
     tmux
     zsh
     nixVersions.unstable
-    glibcLocalesUtf8
+
+    (lib.hiPrio glibcLocalesUtf8)
+    glibc.out
+
+    gcc.cc.lib
 
     rsync
     curl
@@ -17,5 +21,6 @@ buildEnv {
     htop
     nettools
     file
+    patchelf
   ];
 }
