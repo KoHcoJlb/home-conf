@@ -22,5 +22,6 @@ buildEnv {
     nettools
     file
     patchelf
+    tcpdump
   ];
 }
