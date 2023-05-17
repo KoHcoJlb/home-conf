@@ -23,5 +23,6 @@ buildEnv {
     file
     patchelf
     tcpdump
+    dig
   ];
 }
