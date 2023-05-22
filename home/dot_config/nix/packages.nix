@@ -24,5 +24,6 @@ buildEnv {
     patchelf
     tcpdump
     dig
+    inotify-tools
   ];
 }
