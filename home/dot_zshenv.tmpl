@@ -5,3 +5,7 @@ then
 fi
 
 {{ template "setup_env" . }}
+
+if [[ -f ~/.zshenv_local ]]; then
+  source ~/.zshenv_local
+fi
