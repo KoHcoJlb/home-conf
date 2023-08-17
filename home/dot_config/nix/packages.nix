@@ -3,6 +3,7 @@
 with pkgs;
 buildEnv {
   name = "packages";
+  extraOutputsToInstall = ["man"];
   paths = [
     chezmoi
     git
