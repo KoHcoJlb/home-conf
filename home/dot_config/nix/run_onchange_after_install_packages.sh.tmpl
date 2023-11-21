@@ -11,6 +11,11 @@
 
 {{ $nix }} build -o {{ .chezmoi.homeDir }}/.nix-packages -f packages.nix
 
+if [[ ! -e /etc/NIXOS ]]; then
+  echo "Cleaning up nix store..."
+  {{ $nix }} store gc
+fi
+
 {{- else -}}
 echo "No nix binary for {{ .chezmoi.os }}_{{ .chezmoi.arch }}"
 {{- end }}
