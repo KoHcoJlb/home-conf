@@ -1,3 +1,6 @@
 [user]
     name = Ihor Stuzhuk
     email = fujitsuigor@gmail.com
+
+[include]
+    path = config.local
