@@ -19,6 +19,7 @@ buildEnv {
     rsync
     curl
     jq
+    yq-go
     htop
     nettools
     file
