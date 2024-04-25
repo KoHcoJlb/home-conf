@@ -1,0 +1,6 @@
+Host *
+  ControlMaster auto
+  ControlPath ~/.ssh/connections/%h_%p_%r
+  ControlPersist 1m
+
+Include config.local
