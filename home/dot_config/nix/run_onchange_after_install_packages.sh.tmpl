@@ -3,19 +3,12 @@
 # packages: {{ joinPath .chezmoi.workingTree "home" .chezmoi.sourceFile "../packages.nix" | include | sha256sum }}
 # registry: {{ joinPath .chezmoi.workingTree "home" .chezmoi.sourceFile "../registry.json" | include | sha256sum }}
 
-{{ if $nix := includeTemplate "nix" . -}}
+set -e
 
-{{ if eq .chezmoi.uid "0" -}}
-{{ template "create_nix_users" . }}
-{{- end }}
+echo "Installing packages"
+nix run nixpkgs#nix -- build -o {{ .chezmoi.homeDir }}/.nix-packages -f packages.nix
 
-{{ $nix }} build -o {{ .chezmoi.homeDir }}/.nix-packages -f packages.nix
-
-if [[ ! -e /etc/NIXOS ]]; then
+if [ ! -e /etc/NIXOS ]; then
   echo "Cleaning up nix store..."
-  {{ $nix }} store gc
+  {{ template "look_bin" list . "nix" }} store gc
 fi
-
-{{- else -}}
-echo "No nix binary for {{ .chezmoi.os }}_{{ .chezmoi.arch }}"
-{{- end }}
