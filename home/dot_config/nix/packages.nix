@@ -1,6 +1,8 @@
 { pkgs ? import <nixpkgs> {} }:
 
 with pkgs;
+with lib;
+
 buildEnv {
   name = "packages";
   extraOutputsToInstall = ["man"];
@@ -10,9 +12,6 @@ buildEnv {
     tmux
     zsh
     nixVersions.latest
-
-    (lib.hiPrio glibcLocalesUtf8)
-    glibc.out
 
     gcc.cc.lib
 
@@ -26,6 +25,10 @@ buildEnv {
     patchelf
     tcpdump
     dig
+  ] ++ optionals stdenv.isLinux [
+    (lib.hiPrio glibcLocalesUtf8)
+    glibc.out
+
     inotify-tools
   ];
 }
