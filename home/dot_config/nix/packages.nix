@@ -9,7 +9,7 @@ buildEnv {
     git
     tmux
     zsh
-    nixVersions.unstable
+    nixVersions.latest
 
     (lib.hiPrio glibcLocalesUtf8)
     glibc.out
