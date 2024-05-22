@@ -25,6 +25,7 @@ buildEnv {
     patchelf
     tcpdump
     dig
+    dust
   ] ++ optionals stdenv.isLinux [
     (lib.hiPrio glibcLocalesUtf8)
     glibc.out
