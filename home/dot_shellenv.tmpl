@@ -1,14 +1,11 @@
-if [[ -z "$_SETUP_ENV" ]]
-then
-export _SETUP_ENV=1
-
 export PATH=""\
 "{{ .chezmoi.homeDir }}/.nix-profile/bin:"\
 "{{ .chezmoi.homeDir }}/.nix-packages/bin:"\
-"{{ template "bindir" . }}:"\
 "$PATH"
 
 export LC_ALL=en_US.UTF-8
 export LOCALE_ARCHIVE=~/.nix-packages/lib/locale/locale-archive
 
+if [[ -f ~/.shellenv_local ]]; then
+  source ~/.shellenv_local
 fi

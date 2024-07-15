@@ -1,1 +1,0 @@
-{{ joinPath .chezmoi.workingTree "bin" (print .chezmoi.os "_" .chezmoi.arch) }}

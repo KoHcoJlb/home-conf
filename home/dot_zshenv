@@ -1,0 +1,3 @@
+if [[ ! -o i ]]; then
+  source ~/.shellenv
+fi

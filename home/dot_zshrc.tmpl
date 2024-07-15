@@ -1,3 +1,11 @@
+if [[ -o i ]]; then
+  source ~/.shellenv
+fi
+
+if [[ -n "$INTELLIJ_ENVIRONMENT_READER" || -n "$VSCODE_RESOLVING_ENVIRONMENT" ]]; then
+  return
+fi
+
 fpath=(~/.nix-packages/share/zsh/site-functions /usr/share/zsh/site-functions $fpath)
 
 export ZSH="{{ .chezmoi.workingTree }}/ohmyzsh"
