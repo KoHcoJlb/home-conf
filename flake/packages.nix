@@ -33,5 +33,7 @@ buildEnv {
     glibc.out
 
     inotify-tools
+  ] ++ optionals stdenv.isDarwin [
+    coreutils-full
   ];
 }
