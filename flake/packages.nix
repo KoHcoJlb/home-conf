@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs, inputs }:
 
 with pkgs;
 with lib;
@@ -26,6 +26,8 @@ buildEnv {
     tcpdump
     dig
     dust
+
+    inputs.nix-index.packages.${pkgs.system}.nix-index-with-db
   ] ++ optionals stdenv.isLinux [
     (lib.hiPrio glibcLocalesUtf8)
     glibc.out

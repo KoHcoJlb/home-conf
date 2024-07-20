@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+# packages: {{ joinPath .chezmoi.workingTree "flake/flake.lock" | include | sha256sum }}
+
+if [ ! -e /etc/NIXOS ]; then
+  echo "Cleaning up nix store..."
+  nix store gc
+fi
