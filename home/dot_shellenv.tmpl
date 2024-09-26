@@ -6,6 +6,7 @@ export PATH=""\
 export LC_ALL=en_US.UTF-8
 export LOCALE_ARCHIVE=~/.nix-packages/lib/locale/locale-archive
 export NIX_USER_CONF_FILES="{{ .chezmoi.homeDir }}/.config/nix/nix.conf.local:{{ .chezmoi.homeDir }}/.config/nix/nix.conf"
+export PKG_CONFIG_PATH="{{ .chezmoi.homeDir }}/.nix-profile/lib/pkgconfig:{{ .chezmoi.homeDir }}/.nix-packages/lib/pkgconfig"
 
 if [[ -f ~/.shellenv_local ]]; then
   source ~/.shellenv_local
