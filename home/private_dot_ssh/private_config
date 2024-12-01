@@ -3,5 +3,7 @@ Host *
   ControlPath ~/.ssh/connections/%h_%p_%r
   ControlPersist 1m
   ForwardAgent yes
+  ServerAliveInterval 15
+  ServerAliveCountMax 4
 
 Include config.local
