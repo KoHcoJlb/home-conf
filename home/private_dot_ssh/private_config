@@ -1,3 +1,5 @@
+Include config.local
+
 Host *
   ControlMaster auto
   ControlPath ~/.ssh/connections/%h_%p_%r
@@ -5,5 +7,3 @@ Host *
   ForwardAgent yes
   ServerAliveInterval 15
   ServerAliveCountMax 4
-
-Include config.local
