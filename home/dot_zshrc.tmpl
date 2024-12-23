@@ -6,7 +6,7 @@ if [[ -n "$INTELLIJ_ENVIRONMENT_READER" || -n "$VSCODE_RESOLVING_ENVIRONMENT" ]]
   return
 fi
 
-fpath=(~/.nix-packages/share/zsh/site-functions /usr/share/zsh/site-functions $fpath)
+fpath=(~/.nix-profile/share/zsh/site-functions ~/.nix-packages/share/zsh/site-functions /usr/share/zsh/site-functions $fpath)
 
 export ZSH="{{ .chezmoi.workingTree }}/ohmyzsh"
 source $ZSH/zshrc
