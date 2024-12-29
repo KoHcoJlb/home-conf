@@ -8,15 +8,16 @@
     };
   };
 
-  outputs = { nixpkgs, flake-utils, nix-index, ... } @ inputs: {
-    inherit nixpkgs;
-  } // flake-utils.lib.eachDefaultSystem (system:
-    let
-      pkgs = nixpkgs.legacyPackages.${system};
-    in {
-      packages = {
-        homeEnv = import ./packages.nix { inherit pkgs inputs; };
-      };
-    }
-  );
+  outputs = { nixpkgs, flake-utils, ... } @ inputs: flake-utils.lib.eachDefaultSystem (system: let
+    pkgs = import nixpkgs {
+      inherit system;
+      config.allowUnfree = true;
+    };
+  in {
+    legacyPackages = pkgs;
+
+    packages = {
+      homeEnv = import ./packages.nix { inherit pkgs inputs; };
+    };
+  });
 }
