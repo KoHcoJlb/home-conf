@@ -12,3 +12,7 @@ export ZSH="{{ .chezmoi.workingTree }}/ohmyzsh"
 source $ZSH/zshrc
 
 source $HOME/.nix-packages/etc/profile.d/command-not-found.sh
+
+if [[ -f ~/.zshrc_local ]]; then
+  source ~/.zshrc_local
+fi
