@@ -6,5 +6,6 @@ nix profile upgrade --all
 
 if [ ! -e /etc/NIXOS ]; then
   echo "Cleaning up nix store..."
+  nix profile wipe-history
   nix store gc
 fi
