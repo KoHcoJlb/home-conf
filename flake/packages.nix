@@ -16,7 +16,7 @@ buildEnv {
     gcc.cc.lib
 
     rsync
-    curl
+    curlHTTP3
     jq
     yq-go
     htop
