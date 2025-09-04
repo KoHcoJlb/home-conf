@@ -11,6 +11,7 @@ buildEnv {
     git
     tmux
     zsh
+    bash
     nixVersions.latest
 
     gcc.cc.lib
@@ -25,6 +26,7 @@ buildEnv {
     tcpdump
     dig
     dust
+    fd
 
     inputs.nix-index.packages.${pkgs.system}.nix-index-with-db
   ] ++ optionals stdenv.isLinux [
