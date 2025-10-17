@@ -27,6 +27,7 @@ buildEnv {
     dig
     dust
     fd
+    sd
 
     inputs.nix-index.packages.${pkgs.system}.nix-index-with-db
   ] ++ optionals stdenv.isLinux [
