@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
-# packages: {{ joinPath .chezmoi.workingTree "flake/flake.lock" | include | sha256sum }}
+{{- $flake := joinPath .chezmoi.homeDir ".config/nix/flake" }}
+# packages: {{ joinPath $flake "flake.lock" | include | sha256sum }}
 
 nix profile upgrade --all
 

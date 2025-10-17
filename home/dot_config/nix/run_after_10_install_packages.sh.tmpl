@@ -2,8 +2,7 @@
 
 set -e
 
-{{- $flake := joinPath .chezmoi.workingTree "flake" }}
-{{- $config := joinPath .chezmoi.homeDir ".config/nix" }}
+{{- $flake := joinPath .chezmoi.homeDir ".config/nix/flake" }}
 
 nix build -o {{ .chezmoi.homeDir }}/.nix-packages {{ $flake }}#homeEnv
 
