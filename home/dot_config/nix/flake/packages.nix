@@ -17,7 +17,7 @@ buildEnv {
     gcc.cc.lib
 
     rsync
-    curlHTTP3
+    curl
     jaq
     htop
     nettools
