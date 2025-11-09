@@ -8,7 +8,7 @@ buildEnv {
   extraOutputsToInstall = ["man"];
   paths = [
     chezmoi
-    git
+    pkgs.gitCustom or git
     tmux
     zsh
     bash
@@ -28,6 +28,7 @@ buildEnv {
     dust
     fd
     sd
+    _7zz
 
     inputs.nix-index.packages.${pkgs.system}.nix-index-with-db
   ] ++ optionals stdenv.isLinux [
