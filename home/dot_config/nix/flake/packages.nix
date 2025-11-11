@@ -5,7 +5,7 @@ with lib;
 
 buildEnv {
   name = "packages";
-  extraOutputsToInstall = ["man"];
+  extraOutputsToInstall = [ "man" ];
   paths = [
     chezmoi
     pkgs.gitCustom or git
@@ -28,15 +28,20 @@ buildEnv {
     dust
     fd
     sd
-    _7zz
+
+    (_7zz.override {
+      enableUnfree = true;
+    })
 
     inputs.nix-index.packages.${pkgs.system}.nix-index-with-db
-  ] ++ optionals stdenv.isLinux [
+  ]
+  ++ optionals stdenv.isLinux [
     (lib.hiPrio glibcLocalesUtf8)
     glibc.out
 
     inotify-tools
-  ] ++ optionals stdenv.isDarwin [
+  ]
+  ++ optionals stdenv.isDarwin [
     coreutils-full
   ];
 }
