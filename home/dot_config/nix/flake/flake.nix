@@ -10,7 +10,10 @@
 
   outputs =
     { nixpkgs, flake-utils, ... }@inputs:
-    flake-utils.lib.eachDefaultSystem (
+    {
+      inherit (nixpkgs) lib;
+    }
+    // flake-utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = import nixpkgs {
