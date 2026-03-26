@@ -33,7 +33,7 @@ buildEnv {
       enableUnfree = true;
     })
 
-    inputs.nix-index.packages.${pkgs.system}.nix-index-with-db
+    inputs.nix-index.packages.${pkgs.stdenv.hostPlatform.system}.nix-index-with-db
   ]
   ++ optionals stdenv.isLinux [
     (lib.hiPrio glibcLocalesUtf8)
