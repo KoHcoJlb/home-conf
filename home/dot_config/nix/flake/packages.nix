@@ -12,7 +12,6 @@ buildEnv {
     tmux
     zsh
     bash
-    nixVersions.latest
 
     gcc.cc.lib
 
