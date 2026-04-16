@@ -3,6 +3,10 @@
 with pkgs;
 with lib;
 
+let
+  inherit (inputs.self) local;
+
+in
 buildEnv {
   name = "packages";
   extraOutputsToInstall = [ "man" ];
@@ -45,5 +49,7 @@ buildEnv {
   ]
   ++ optionals stdenv.isDarwin [
     coreutils-full
-  ];
+  ]
+  ++ optional (local.installNix or true) nixVersions.latest
+  ++ (local.extraPackages or (ps: [ ])) pkgs;
 }

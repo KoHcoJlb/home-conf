@@ -9,9 +9,11 @@
   };
 
   outputs =
-    { nixpkgs, flake-utils, ... }@inputs:
+    { nixpkgs, flake-utils, self, ... }@inputs:
     {
       inherit (nixpkgs) lib;
+
+      local = if builtins.pathExists ./local.nix then import ./local.nix else {};
     }
     // flake-utils.lib.eachDefaultSystem (
       system:
@@ -19,7 +21,7 @@
         pkgs = import nixpkgs {
           inherit system;
           config.allowUnfree = true;
-          overlays = if builtins.pathExists ./pkgs-overlays.nix then import ./pkgs-overlays.nix else [ ];
+          overlays = self.local.nixpkgs-overlays or [];
         };
       in
       {
