@@ -6,6 +6,9 @@ with lib;
 buildEnv {
   name = "packages";
   extraOutputsToInstall = [ "man" ];
+  postBuild = ''
+    ln -s ${inputs.nixpkgs} $out/share/nixpkgs
+  '';
   paths = [
     chezmoi
     pkgs.gitCustom or git
