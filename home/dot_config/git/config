@@ -1,6 +1,9 @@
 [user]
-    name = Ihor Stuzhuk
-    email = fujitsuigor@gmail.com
+  name = Ihor Stuzhuk
+  email = fujitsuigor@gmail.com
+
+[core]
+  autocrlf = input
 
 [include]
-    path = config.local
+  path = config.local
