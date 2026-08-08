@@ -19,6 +19,7 @@ buildEnv {
     tmux
     zsh
     bash
+    atuin
 
     gcc.cc.lib
 

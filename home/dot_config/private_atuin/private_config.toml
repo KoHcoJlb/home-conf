@@ -1,0 +1,15 @@
+style = "compact"
+
+inline_height_shell_up_key_binding = 16
+# auto_hide_height = 16
+
+show_help = false
+show_tabs = false
+show_numeric_shortcuts = false
+
+enter_accept = true
+
+exit_mode = "return-query"
+
+[ui]
+columns = ["command"]
