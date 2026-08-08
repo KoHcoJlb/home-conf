@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -eu
+
 {{- $flake := joinPath .chezmoi.homeDir ".config/nix/flake" }}
 # packages: {{ joinPath $flake "flake.lock" | include | sha256sum }}
 
