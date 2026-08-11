@@ -1,6 +1,8 @@
 set -g default-shell {{ template "look_bin" list . "zsh" }}
 set -g history-limit 10000
 set -g window-status-current-style bg=yellow
+set -s extended-keys always
+set -s extended-keys-format csi-u
 
 bind-key -n 'C-Left' previous-window
 bind-key -n 'C-Right' next-window
