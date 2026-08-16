@@ -8,8 +8,9 @@ show_tabs = false
 show_numeric_shortcuts = false
 
 enter_accept = true
-
 exit_mode = "return-query"
+
+search_mode = "fulltext"
 
 [keymap.emacs]
 "ctrl-backspace" = "delete"
