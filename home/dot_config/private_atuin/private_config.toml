@@ -13,7 +13,7 @@ exit_mode = "return-query"
 search_mode = "fulltext"
 
 [keymap.emacs]
-"ctrl-backspace" = "delete"
+"ctrl-backspace" = "delete-all"
 
 [ui]
 columns = ["command"]
