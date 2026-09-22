@@ -42,13 +42,13 @@ buildEnv {
 
     inputs.nix-index.packages.${pkgs.stdenv.hostPlatform.system}.nix-index-with-db
   ]
-  ++ optionals stdenv.isLinux [
+  ++ optionals stdenv.hostPlatform.isLinux [
     (lib.hiPrio glibcLocalesUtf8)
     glibc.out
 
     inotify-tools
   ]
-  ++ optionals stdenv.isDarwin [
+  ++ optionals stdenv.hostPlatform.isDarwin [
     coreutils-full
   ]
   ++ optional (local.installNix or true) nixVersions.latest
