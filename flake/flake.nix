@@ -14,6 +14,8 @@
       inherit (nixpkgs) lib;
 
       local = if builtins.pathExists ./local.nix then import ./local.nix else {};
+
+      hydraJobs = nixpkgs.lib.getAttrs [ "aarch64-linux" "x86_64-linux" ] self.packages;
     }
     // flake-utils.lib.eachDefaultSystem (
       system:
