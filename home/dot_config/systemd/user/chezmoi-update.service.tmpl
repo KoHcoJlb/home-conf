@@ -1,0 +1,9 @@
+{{ if eq .chezmoi.os "linux" -}}
+[Unit]
+Description=Update chezmoi configuration
+
+[Service]
+Type=oneshot
+Environment=SKIP_TMUX=1
+ExecStart=%h/.nix-packages/bin/zsh -ic chezmoi_update
+{{ end -}}

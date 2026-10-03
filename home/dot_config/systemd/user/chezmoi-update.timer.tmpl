@@ -1,0 +1,12 @@
+{{ if eq .chezmoi.os "linux" -}}
+[Unit]
+Description=Update chezmoi configuration every four hours
+
+[Timer]
+OnBootSec=0
+OnUnitActiveSec=4h
+RandomizedDelaySec=1h
+
+[Install]
+WantedBy=timers.target
+{{ end -}}

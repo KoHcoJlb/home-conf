@@ -1,0 +1,14 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env sh
+
+set -e
+
+test -d /run/systemd/system || exit 0
+
+user_id=$(id -u)
+if [ "$user_id" -eq 0 ]; then
+    loginctl enable-linger "$user_id"
+elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+    sudo -n loginctl enable-linger "$user_id"
+fi
+{{ end -}}
