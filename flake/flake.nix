@@ -24,7 +24,16 @@
             allowUnfree = true;
             allowUnsupportedSystem = true;
           };
-          overlays = self.local.nixpkgs-overlays or [];
+          overlays = [
+            (_final: prev: nixpkgs.lib.optionalAttrs prev.stdenv.hostPlatform.isDarwin {
+              e2fsprogs = (prev.e2fsprogs.override { withFuse = true; }).overrideAttrs (old: {
+                patches = (old.patches or []) ++ [ ./patches/e2fsprogs-darwin.patch ];
+
+                # Avoid gettext starting CoreFoundation threads before fuse_daemonize.
+                configureFlags = (old.configureFlags or []) ++ [ "--disable-nls" ];
+              });
+            })
+          ] ++ (self.local.nixpkgs-overlays or []);
         };
       in
       {

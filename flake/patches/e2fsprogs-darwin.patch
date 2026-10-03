@@ -1,0 +1,22 @@
+--- a/misc/fuse2fs.c
++++ b/misc/fuse2fs.c
+@@ -4685,7 +4685,8 @@
+ 	FILE *orig_stderr = stderr;
+ 	char extra_args[BUFSIZ];
+ 	int ret;
+-	int flags = EXT2_FLAG_64BITS | EXT2_FLAG_THREADS | EXT2_FLAG_EXCLUSIVE |
++	/* macOS must not start bitmap reader threads before fuse_daemonize. */
++	int flags = EXT2_FLAG_64BITS | EXT2_FLAG_EXCLUSIVE |
+ 		    EXT2_FLAG_RW;
+ 
+ 	memset(&fctx, 0, sizeof(fctx));
+@@ -5117,7 +5118,9 @@
+ #ifdef EILSEQ
+ 	case EILSEQ:
+ #endif
++#if EUCLEAN != EIO
+ 	case EUCLEAN:
++#endif
+ 		/* these errnos usually denote corruption or persistence fail */
+ 		is_err = 1;
+ 		ret = -err;
