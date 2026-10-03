@@ -2,7 +2,7 @@
 
 set -eu
 
-{{- $flake := joinPath .chezmoi.homeDir ".config/nix/flake" }}
+{{- $flake := joinPath .chezmoi.workingTree "flake" }}
 # packages: {{ joinPath $flake "flake.lock" | include | sha256sum }}
 
 nix profile upgrade --all

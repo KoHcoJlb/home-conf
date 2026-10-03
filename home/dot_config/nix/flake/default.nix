@@ -1,1 +1,0 @@
-import (builtins.getFlake (builtins.toString ./.)).inputs.nixpkgs

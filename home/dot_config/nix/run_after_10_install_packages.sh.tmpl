@@ -2,8 +2,8 @@
 
 set -e
 
-{{- $flake := joinPath .chezmoi.homeDir ".config/nix/flake" }}
+{{- $flake := joinPath .chezmoi.workingTree "flake" }}
 
-nix build -o {{ .chezmoi.homeDir }}/.nix-packages {{ $flake }}#homeEnv
+nix build -o {{ .chezmoi.homeDir }}/.nix-packages "path:{{ $flake }}#homeEnv"
 
-nix registry add nixpkgs {{ $flake }}
+nix registry add nixpkgs "path:{{ $flake }}"
