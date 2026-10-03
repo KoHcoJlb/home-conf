@@ -1,0 +1,12 @@
+diff --git a/crates/atuin/src/command/client/search/interactive.rs b/crates/atuin/src/command/client/search/interactive.rs
+--- a/crates/atuin/src/command/client/search/interactive.rs
++++ b/crates/atuin/src/command/client/search/interactive.rs
+@@ -1971,5 +1971,7 @@
+                                 app.results_len = results.len();
+-                                app.results_state = ListState::default();
++                                app.results_state.select(
++                                    index.min(app.results_len.saturating_sub(1)),
++                                );
+                                 app.inspecting_state.reset();
+                                 app.tab_index = 0;
+                             },

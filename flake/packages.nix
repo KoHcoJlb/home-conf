@@ -19,7 +19,7 @@ buildEnv {
     tmux
     zsh
     bash
-    atuin
+    (callPackage ./atuin { })
 
     gcc.cc.lib
 
