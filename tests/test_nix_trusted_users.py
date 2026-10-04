@@ -2,6 +2,8 @@ import ast
 import contextlib
 import io
 import json
+import os
+import shutil
 import subprocess
 import tempfile
 import types
@@ -10,7 +12,7 @@ from unittest.mock import patch
 
 SOURCE = (
     Path(__file__).resolve().parents[1]
-    / "home/dot_config/nix/run_before_00_trust_user.py.tmpl"
+    / "home/dot_config/nix/run_before_00_trust_user.tmpl"
 )
 TRUST_COMMAND = [
     "nix",
@@ -114,7 +116,58 @@ def check_wait(responses, expected):
         assert clock[0] == 30
 
 
+def check_launch():
+    chezmoi = shutil.which("chezmoi")
+    nix = shutil.which("nix")
+    assert chezmoi and nix, "Run this test with chezmoi and nix on PATH"
+
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory)
+        source = root / "source"
+        home = root / "home"
+        bin_dir = root / "bin"
+        for path in (source, home, bin_dir):
+            path.mkdir()
+        (bin_dir / "nix").symlink_to(nix)
+        config = root / "chezmoi.toml"
+        config.write_text("")
+
+        # Exercise the real filename and shebang without changing system settings.
+        (source / SOURCE.stem).write_text(
+            SCRIPT.splitlines()[0] + "\nimport sys\nprint(sys.executable)\n"
+        )
+        env = os.environ | {"PATH": str(bin_dir)}
+        assert shutil.which("python3", path=env["PATH"]) is None
+
+        result = subprocess.run(
+            [
+                chezmoi,
+                "--config",
+                str(config),
+                "--source",
+                str(source),
+                "--destination",
+                str(home),
+                "--cache",
+                str(root / "cache"),
+                "--persistent-state",
+                str(root / "state.boltdb"),
+                "apply",
+            ],
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=120,
+            check=False,
+        )
+
+        assert result.returncode == 0, result.stderr
+        assert result.stdout.strip().startswith("/nix/store/"), result.stdout
+
+
 def main():
+    check_launch()
+
     for before, after in (
         ("", "extra-trusted-users = alice\n"),
         ("trusted-users = root bob\n", "trusted-users = root bob alice\n"),
@@ -306,7 +359,7 @@ def main():
         check_wait(responses, expected)
 
     print(
-        "PASS: daemon trust check, trust settings, includes, idempotence, sudo, permissions, systemd, rollback, bounded verification"
+        "PASS: chezmoi launch without Python on PATH, daemon trust check, trust settings, includes, idempotence, sudo, permissions, systemd, rollback, bounded verification"
     )
 
 
