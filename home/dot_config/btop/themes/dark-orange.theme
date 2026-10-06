@@ -1,0 +1,71 @@
+# Dark Orange — matching my-firefox's orange accents and Sidebery dark surfaces.
+
+# Surfaces and text.
+theme[main_bg]="#000000"
+theme[main_fg]="#e6e6e6"
+theme[title]="#fafafa"
+theme[hi_fg]="#ed7846"
+theme[inactive_fg]="#999999"
+theme[graph_text]="#e6e6e6"
+theme[meter_bg]="#353535"
+
+# Firefox's 50% orange selection composited over black.
+theme[selected_bg]="#773c23"
+theme[selected_fg]="#fafafa"
+theme[proc_misc]="#ed7846"
+
+# Orange panel borders, neutral internal dividers.
+theme[cpu_box]="#ed7846"
+theme[mem_box]="#ed7846"
+theme[net_box]="#ed7846"
+theme[proc_box]="#ed7846"
+theme[div_line]="#353535"
+
+# Standard btop temperature and CPU load palettes (including per-core graphs).
+theme[temp_start]="#4897d4"
+theme[temp_mid]="#5474e8"
+theme[temp_end]="#ff40b6"
+
+theme[cpu_start]="#77ca9b"
+theme[cpu_mid]="#cbc06c"
+theme[cpu_end]="#dc4c4c"
+
+# Memory/disk meters: green free, blue cached, yellow available.
+theme[free_start]="#4aa878"
+theme[free_mid]="#83d9a0"
+theme[free_end]="#b6f0b0"
+
+theme[cached_start]="#4b86c6"
+theme[cached_mid]="#5eacf0"
+theme[cached_end]="#a4d8ff"
+
+theme[available_start]="#b89545"
+theme[available_mid]="#e6c66d"
+theme[available_end]="#ffe6a0"
+
+# A lime-green midpoint pushes the perceived yellow/amber transition higher.
+theme[used_start]="#83d9a0"
+theme[used_mid]="#a0ff50"
+theme[used_end]="#ff6068"
+
+# Download in cyan, upload in purple.
+theme[download_start]="#329eaa"
+theme[download_mid]="#64d8df"
+theme[download_end]="#a6f3ef"
+
+theme[upload_start]="#9164c8"
+theme[upload_mid]="#bd93f9"
+theme[upload_end]="#dfbcff"
+
+# Orange process accents, brightening toward red at high usage.
+theme[process_start]="#ed7846"
+theme[process_mid]="#ff925f"
+theme[process_end]="#ff6068"
+
+# Process status and followed rows (supported by newer btop versions).
+theme[proc_pause_bg]="#a94318"
+theme[proc_follow_bg]="#773c23"
+theme[proc_banner_bg]="#353535"
+theme[proc_banner_fg]="#fafafa"
+theme[followed_bg]="#3b1e12"
+theme[followed_fg]="#fafafa"

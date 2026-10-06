@@ -27,6 +27,7 @@ buildEnv {
     curl
     jaq
     htop
+    btop
     nettools
     file
     patchelf
