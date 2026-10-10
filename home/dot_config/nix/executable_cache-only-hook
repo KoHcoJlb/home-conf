@@ -1,0 +1,4 @@
+#!/bin/sh
+
+printf 'Cache-only chezmoi update: refusing to build %s\n' "$1" >&2
+exit 1
