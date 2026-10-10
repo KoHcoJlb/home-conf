@@ -1,5 +1,11 @@
 `sh <(curl https://igor.kiev.ua/chezmoi.sh)`
 
+## Updates
+
+`update.zsh` applies `origin/master` only when its tip has a valid SSH
+signature from a key in the local checkout's `allowed_signers`. Unsigned tips
+and invalid or untrusted signatures fail the update.
+
 ## Hydra
 
 The flake exposes `hydraJobs.aarch64-linux.homeEnv` and
