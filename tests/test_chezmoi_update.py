@@ -3,12 +3,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-SOURCE = Path(__file__).resolve().parents[1] / "ohmyzsh/zshrc"
-UPDATE = SOURCE.read_text().split("function chezmoi_update {", 1)[1]
-UPDATE = "function chezmoi_update {" + UPDATE.split("\n}\n", 1)[0] + "\n}\n"
-SCRIPT = (
-    UPDATE
-    + """
+SOURCE = Path(__file__).resolve().parents[1] / "update.zsh"
+MOCKS = """
 git() { print -r -- "git:$*"; }
 chezmoi() {
   print -r -- "chezmoi:$*"
@@ -17,16 +13,15 @@ chezmoi() {
 }
 tmux() { print -r -- error; }
 read() { print -r -- read; }
-chezmoi_update
 """
-)
 
 
 def check():
     with tempfile.TemporaryDirectory() as directory:
         (Path(directory) / ".local/share/chezmoi/.git").mkdir(parents=True)
+        (Path(directory) / ".shellenv").write_text(MOCKS)
         env = dict(os.environ, HOME=directory, FAIL_APPLY="0", TMUX_PANE="")
-        command = ["zsh", "-f", "-c", SCRIPT]
+        command = [str(SOURCE)]
 
         for fail, pane in (("0", ""), ("1", ""), ("1", "%test")):
             with subprocess.Popen(
