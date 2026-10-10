@@ -1,6 +1,13 @@
 [user]
   name = Ihor Stuzhuk
   email = fujitsuigor@gmail.com
+  signingkey = key::ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFgQ2NsE818CdX9zJ3GHIUNTYHhKHy8dbFzrP4EXhjqi
+
+[commit]
+  gpgsign = true
+
+[gpg]
+  format = ssh
 
 [core]
   autocrlf = input

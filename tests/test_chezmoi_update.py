@@ -5,7 +5,13 @@ from pathlib import Path
 
 SOURCE = Path(__file__).resolve().parents[1] / "update.zsh"
 MOCKS = """
-git() { print -r -- "git:$*"; }
+git() {
+  case "$1" in
+    rev-parse) print -r -- target ;;
+    -c) print -r -- G ;;
+    *) print -r -- "git:$*" ;;
+  esac
+}
 chezmoi() {
   print -r -- "chezmoi:$*"
   builtin read -r reply
@@ -14,6 +20,107 @@ chezmoi() {
 tmux() { print -r -- error; }
 read() { print -r -- read; }
 """
+
+
+def check_signatures():
+    with tempfile.TemporaryDirectory() as directory:
+        home = Path(directory)
+        origin = home / "origin"
+        checkout = home / ".local/share/chezmoi"
+        key = home / "signing-key"
+        (home / ".shellenv").write_text("chezmoi() { print -r -- applied; }\n")
+        env = dict(
+            os.environ,
+            HOME=directory,
+            GIT_CONFIG_NOSYSTEM="1",
+            GIT_CONFIG_GLOBAL=os.devnull,
+            SSH_AUTH_SOCK="",
+            TMUX_PANE="",
+        )
+
+        def git(*args, cwd=origin, input=None):
+            return subprocess.run(
+                ["git", *args],
+                cwd=cwd,
+                env=env,
+                input=input,
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=True,
+            ).stdout.strip()
+
+        def update(expected, *, applied=False, error=None):
+            result = subprocess.run(
+                [str(SOURCE)],
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=False,
+            )
+
+            assert result.returncode == (1 if error else 0), result
+            assert ("applied" in result.stdout.splitlines()) == applied, result
+            assert git("rev-parse", "HEAD", cwd=checkout) == expected, result
+            if error:
+                assert error in result.stderr, result
+
+        for path in (key, home / "untrusted-key"):
+            subprocess.run(
+                ["ssh-keygen", "-t", "ed25519", "-N", "", "-f", str(path)],
+                env=env,
+                check=True,
+                timeout=10,
+            )
+
+        origin.mkdir()
+        git("init", "-b", "master")
+        git("config", "user.name", "Test")
+        git("config", "user.email", "test@example.com")
+        git("config", "gpg.format", "ssh")
+        git("config", "user.signingkey", str(key))
+        (origin / "allowed_signers").write_text(
+            'test@example.com namespaces="git" ' + key.with_suffix(".pub").read_text()
+        )
+        git("add", "allowed_signers")
+        git("commit", "-m", "Unsigned legacy history")
+        baseline = git("rev-parse", "HEAD")
+        checkout.parent.mkdir(parents=True)
+        git("clone", str(origin), str(checkout))
+
+        update(baseline, error="Unsigned commit")
+
+        git("commit", "--allow-empty", "-S", "-m", "Trusted signature")
+        signed = git("rev-parse", "HEAD")
+        update(signed, applied=True)
+
+        git("commit", "--allow-empty", "-m", "Unsigned tip")
+        update(signed, error="Unsigned commit")
+
+        git("commit", "--allow-empty", "-S", "-m", "Signed after unsigned")
+        signed = git("rev-parse", "HEAD")
+        update(signed, applied=True)
+
+        git(
+            "-c",
+            f"user.signingkey={home / 'untrusted-key'}",
+            "commit",
+            "--allow-empty",
+            "-S",
+            "-m",
+            "Untrusted signature",
+        )
+        update(signed, error="Invalid or untrusted signature")
+
+        content = git("cat-file", "commit", signed) + "\nTampered message\n"
+        tampered = git("hash-object", "-t", "commit", "-w", "--stdin", input=content)
+        git("update-ref", "refs/heads/master", tampered)
+        update(signed, error="Invalid or untrusted signature")
+
+        git("update-ref", "refs/heads/master", signed)
+        (checkout / "allowed_signers").unlink()
+        update(signed, error="Invalid or untrusted signature")
 
 
 def check():
@@ -78,4 +185,5 @@ def check():
 
 if __name__ == "__main__":
     check()
-    print("chezmoi update locking checks passed")
+    check_signatures()
+    print("chezmoi update locking and signature checks passed")

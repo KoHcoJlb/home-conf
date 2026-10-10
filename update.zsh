@@ -5,7 +5,7 @@ export SSH_AUTH_SOCK=${SSH_AUTH_SOCK:-${ZSH_SSH_AGENT_SOCK:-$HOME/.ssh/auth_sock
 
 function do_update {
   setopt local_options err_return
-  local update_lock_fd
+  local update_lock_fd previous target signature
 
   cd ~/.local/share/chezmoi
 
@@ -14,13 +14,29 @@ function do_update {
   zsystem flock -t 0 -f update_lock_fd .git/chezmoi-update.lock 2>/dev/null || return 0
 
   {
-    git fetch
+    git fetch || return
 
-    PREV=$(git rev-parse HEAD)
-    git reset --hard origin/master
-    git -P diff --stat $PREV HEAD
+    target=$(git rev-parse origin/master) || return
+    signature=$(git -c gpg.ssh.allowedSignersFile="$PWD/allowed_signers" \
+      -c gpg.openpgp.program=false -c gpg.x509.program=false \
+      log -1 --format='%G?' "$target") || return
+    case "$signature" in
+      G) ;;
+      N)
+        print -u2 -r -- "Unsigned commit $target; refusing to update."
+        return 1
+        ;;
+      *)
+        print -u2 -r -- "Invalid or untrusted signature on commit $target."
+        return 1
+        ;;
+    esac
 
-    git submodule update --recursive
+    previous=$(git rev-parse HEAD) || return
+    git reset --hard "$target" || return
+    git -P diff --stat "$previous" HEAD || return
+
+    git submodule update --recursive || return
 
     chezmoi apply
   } always {
