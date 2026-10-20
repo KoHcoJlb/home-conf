@@ -1,0 +1,41 @@
+--- a/etc/profile.d/command-not-found.sh
++++ b/etc/profile.d/command-not-found.sh
+@@ -43,8 +43,8 @@
+ The program '$cmd' is currently not installed. It is provided by
+ the package '$toplevel.$attrs', which I will now install for you.
+ EOF
+-                if [ -e "$HOME/.nix-profile/manifest.json" ]; then
+-                    nix profile install $toplevel#$attrs
++                if true; then
++                    nix profile add $toplevel#$attrs
+                 else
+                     nix-env -iA $toplevel.$attrs
+                 fi
+@@ -72,7 +72,7 @@
+                 fi
+             else
+-                if [ -e "$HOME/.nix-profile/manifest.json" ]; then
++                if true; then
+                     >&2 cat <<EOF
+ The program '$cmd' is currently not installed. You can install it
+ by typing:
+-  nix profile install $toplevel#$attrs
++  nix profile add $toplevel#$attrs
+@@ -101,8 +101,8 @@
+             # ensure we get each element of attrs
+             # in a cross platform way
+             while read attr; do
+-                if [ -e "$HOME/.nix-profile/manifest.json" ]; then
+-                    >&2 echo "  nix profile install $toplevel#$attr"
++                if true; then
++                    >&2 echo "  nix profile add $toplevel#$attr"
+                 else
+                     >&2 echo "  nix-env -iA $toplevel.$attr"
+                 fi
+@@ -116,5 +116,5 @@
+             while read attr; do
+-                if [ -e "$HOME/.nix-profile/manifest.json" ]; then
++                if true; then
+                     >&2 echo "  nix shell $toplevel#$attr -c $cmd ..."
+                 else
+                     >&2 echo "  nix-shell -p $attr --run '$cmd ...'"

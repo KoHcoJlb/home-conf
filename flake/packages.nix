@@ -41,7 +41,14 @@ buildEnv {
       enableUnfree = true;
     })
 
-    inputs.nix-index.packages.${pkgs.stdenv.hostPlatform.system}.nix-index-with-db
+    (inputs.nix-index.packages.${pkgs.stdenv.hostPlatform.system}.nix-index-with-db.overrideAttrs
+      (old: {
+        buildCommand = old.buildCommand + ''
+          # This home configuration always enables the modern Nix CLI.
+          ${lib.getExe patch} -d "$out" -p1 < ${./patches/nix-index-modern-cli.patch}
+        '';
+      })
+    )
   ]
   ++ optionals stdenv.hostPlatform.isLinux [
     (lib.hiPrio glibcLocalesUtf8)
