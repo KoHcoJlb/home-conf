@@ -1,0 +1,7 @@
+#compdef sops
+
+local -a opts
+# Keep the empty current word so SOPS does not complete the preceding flag.
+opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 command sops "${(@)words[2,CURRENT]}" --generate-bash-completion)}")
+
+[[ -n $opts[1] ]] && _describe 'values' opts || _files
