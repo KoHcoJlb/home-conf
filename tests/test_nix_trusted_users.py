@@ -129,15 +129,33 @@ def check_launch():
         for path in (source, home, bin_dir):
             path.mkdir()
         (bin_dir / "nix").symlink_to(nix)
+        (bin_dir / "sh").symlink_to(shutil.which("sh"))
         config = root / "chezmoi.toml"
         config.write_text("")
+
+        shutil.copytree(SOURCE.parents[3] / "flake", source / "flake")
+        (source / ".chezmoiignore").write_text("flake\n")
+        registry_script = SOURCE.with_name("run_before_00_register_nixpkgs.sh.tmpl")
+        shutil.copyfile(registry_script, source / registry_script.name)
+        legacy_flake = root / "legacy-flake"
+        legacy_flake.symlink_to(source / "flake", target_is_directory=True)
 
         # Exercise the real filename and shebang without changing system settings.
         (source / SOURCE.stem).write_text(
             SCRIPT.splitlines()[0] + "\nimport sys\nprint(sys.executable)\n"
         )
-        env = os.environ | {"PATH": str(bin_dir)}
+        env = os.environ | {
+            "PATH": str(bin_dir),
+            "XDG_CONFIG_HOME": str(root / "config"),
+        }
         assert shutil.which("python3", path=env["PATH"]) is None
+
+        subprocess.run(
+            [nix, "registry", "add", "nixpkgs", f"path:{legacy_flake}"],
+            env=env,
+            check=True,
+            timeout=10,
+        )
 
         result = subprocess.run(
             [
@@ -155,14 +173,16 @@ def check_launch():
                 "apply",
             ],
             env=env,
-            capture_output=True,
+            stdout=subprocess.PIPE,
             text=True,
             timeout=120,
             check=False,
         )
 
-        assert result.returncode == 0, result.stderr
+        assert result.returncode == 0, result
         assert result.stdout.strip().startswith("/nix/store/"), result.stdout
+        registry = json.loads((root / "config/nix/registry.json").read_text())
+        assert registry["flakes"][0]["to"]["path"] == str(source / "flake")
 
 
 def main():
@@ -359,7 +379,7 @@ def main():
         check_wait(responses, expected)
 
     print(
-        "PASS: chezmoi launch without Python on PATH, daemon trust check, trust settings, includes, idempotence, sudo, permissions, systemd, rollback, bounded verification"
+        "PASS: registry repair before chezmoi launch without Python on PATH, daemon trust check, trust settings, includes, idempotence, sudo, permissions, systemd, rollback, bounded verification"
     )
 
 

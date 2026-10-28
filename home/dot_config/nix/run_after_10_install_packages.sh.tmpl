@@ -5,5 +5,3 @@ set -e
 {{- $flake := joinPath .chezmoi.workingTree "flake" }}
 
 nix build -o {{ .chezmoi.homeDir }}/.nix-packages "path:{{ $flake }}#homeEnv"
-
-nix registry add nixpkgs "path:{{ $flake }}"
