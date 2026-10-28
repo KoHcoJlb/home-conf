@@ -1,7 +1,31 @@
 #!/usr/bin/env zsh
 
+allow_build=false
+for arg in "$@"; do
+  case "$arg" in
+    --allow-build) allow_build=true ;;
+    --help|-h)
+      print -r -- "Usage: $0 [--allow-build]"
+      print -r -- "Use cached packages only; --allow-build permits building missing packages."
+      exit 0
+      ;;
+    *)
+      print -u2 -r -- "Unknown option: $arg"
+      exit 1
+      ;;
+  esac
+done
+
 source "$HOME/.shellenv" || exit
 export SSH_AUTH_SOCK=${SSH_AUTH_SOCK:-${ZSH_SSH_AGENT_SOCK:-$HOME/.ssh/auth_sock}}
+
+if [[ "$allow_build" == false ]]; then
+  export NIX_CONFIG="${NIX_CONFIG:-}
+max-jobs = 0
+builders =
+always-allow-substitutes = true
+pre-build-hook = $HOME/.config/nix/cache-only-hook"
+fi
 
 function do_update {
   setopt local_options err_return

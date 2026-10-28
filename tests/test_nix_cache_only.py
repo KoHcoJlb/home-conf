@@ -1,29 +1,53 @@
-import ast
 import os
 import subprocess
 import tempfile
 from pathlib import Path
 
+from test_chezmoi_update import MOCKS, SOURCE
+
 ROOT = Path(__file__).resolve().parents[1]
-SERVICE = ROOT / "home/dot_config/systemd/user/chezmoi-update.service.tmpl"
 HOOK = ROOT / "home/dot_config/nix/executable_cache-only-hook"
 
 
 def check():
-    setting = next(
-        line.removeprefix("Environment=")
-        for line in SERVICE.read_text().splitlines()
-        if line.startswith('Environment="NIX_CONFIG=')
-    )
-    config = ast.literal_eval(setting).removeprefix("NIX_CONFIG=")
-
     with tempfile.TemporaryDirectory() as directory:
         home = Path(directory)
+        (home / ".local/share/chezmoi/.git").mkdir(parents=True)
+        (home / ".shellenv").write_text(
+            MOCKS + '\nchezmoi() { print -rn -- "$NIX_CONFIG" > "$HOME/nix-config"; }\n'
+        )
         hook = home / ".config/nix/cache-only-hook"
         hook.parent.mkdir(parents=True)
         hook.write_bytes(HOOK.read_bytes())
         hook.chmod(0o755)
-        env = dict(os.environ, NIX_CONFIG=config.replace("%h", str(home)))
+        inherited = (
+            "max-jobs = 1\nbuilders =\nsandbox = false\n"
+            "build-users-group =\nconnect-timeout = 7"
+        )
+        env = dict(os.environ, HOME=directory, NIX_CONFIG=inherited, TMUX_PANE="")
+        config_file = home / "nix-config"
+
+        for args in (["--allow-build"], []):
+            subprocess.run([str(SOURCE), *args], env=env, check=True, timeout=10)
+            config = config_file.read_text()
+            if args:
+                assert config == inherited, config
+            else:
+                assert config.startswith(inherited + "\n"), config
+                assert "\nmax-jobs = 0\n" in config, config
+                assert "\nbuilders =\n" in config, config
+                assert "\nalways-allow-substitutes = true\n" in config, config
+                assert config.endswith(f"pre-build-hook = {hook}"), config
+
+        config_file.unlink()
+        for option, status in (("--help", 0), ("--unknown", 1)):
+            result = subprocess.run(
+                [str(SOURCE), option], env=env, check=False, timeout=10
+            )
+            assert result.returncode == status, result
+            assert not config_file.exists()
+
+        env["NIX_CONFIG"] = config
         command = [
             "nix",
             "build",
@@ -31,7 +55,7 @@ def check():
             "--extra-experimental-features",
             "nix-command",
             "--store",
-            f"local?root={home}/store",
+            f"local?store={home}/store&state={home}/state&log={home}/log",
             "--option",
             "substituters",
             "",
@@ -40,12 +64,6 @@ def check():
         ]
 
         for prefer_local in ("false", "true"):
-            # Exercise the hook independently of the max-jobs scheduling guard.
-            options = (
-                ["--option", "max-jobs", "1", "--option", "sandbox", "false"]
-                if prefer_local == "true"
-                else []
-            )
             result = subprocess.run(
                 command
                 + [
@@ -55,8 +73,7 @@ def check():
                         'args = [ "-c" "exit 99" ]; '
                         f"preferLocalBuild = {prefer_local}; }}"
                     )
-                ]
-                + options,
+                ],
                 env=env,
                 check=False,
                 capture_output=True,
@@ -65,12 +82,7 @@ def check():
             )
 
             assert result.returncode != 0, result
-            expected = (
-                "Cache-only chezmoi update: refusing to build"
-                if prefer_local == "true"
-                else "max-jobs"
-            )
-            assert expected in result.stderr, result.stderr
+            assert "max-jobs" in result.stderr, result.stderr
             assert "exit code 99" not in result.stderr, result.stderr
 
         subprocess.run(
@@ -80,7 +92,25 @@ def check():
             timeout=30,
         )
 
+        result = subprocess.run(
+            command
+            + [
+                (
+                    'derivation { name = "allow-build-test"; '
+                    'system = builtins.currentSystem; builder = "/bin/sh"; '
+                    'args = [ "-c" "exit 99" ]; }'
+                )
+            ],
+            env=dict(env, NIX_CONFIG=inherited),
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        assert result.returncode != 0, result
+        assert "exit code 99" in result.stderr, result.stderr
+
 
 if __name__ == "__main__":
     check()
-    print("Nix cache-only service checks passed")
+    print("Nix cache-only updater checks passed")

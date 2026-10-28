@@ -6,6 +6,9 @@
 signature from a key in the local checkout's `allowed_signers`. Unsigned tips
 and invalid or untrusted signatures fail the update.
 
+Updates use cached Nix packages only by default and fail if a build is needed.
+Run `./update.zsh --allow-build` to permit building missing packages.
+
 ## Hydra
 
 The flake exposes `hydraJobs.aarch64-linux.homeEnv` and

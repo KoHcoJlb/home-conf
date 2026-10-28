@@ -4,6 +4,5 @@ Description=Update chezmoi configuration
 
 [Service]
 Type=oneshot
-Environment="NIX_CONFIG=max-jobs = 0\nbuilders =\nalways-allow-substitutes = true\npre-build-hook = %h/.config/nix/cache-only-hook"
 ExecStart=%h/.nix-packages/bin/zsh %h/.local/share/chezmoi/update.zsh
 {{ end -}}
