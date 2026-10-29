@@ -27,7 +27,9 @@ buildEnv {
     curl
     jaq
     htop
-    btop
+    (btop.overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [ ./patches/btop-memory-beside-cpu.patch ];
+    }))
     nettools
     file
     patchelf
